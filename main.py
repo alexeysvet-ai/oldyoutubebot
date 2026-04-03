@@ -10,6 +10,7 @@ TOKEN = os.getenv("TOKEN")
 BASE_URL = os.getenv("BASE_URL")
 WEBHOOK_PATH = "/webhook"
 PORT = int(os.getenv("PORT", 10000))
+WEBHOOK_URL = f"{BASE_URL}{WEBHOOK_PATH}" if BASE_URL else None
 
 if not TOKEN:
     raise ValueError("TOKEN not set")
