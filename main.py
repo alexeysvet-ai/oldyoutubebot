@@ -4,35 +4,21 @@ from aiogram.types import Message
 import asyncio
 import os
 import threading
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, HTTPServe
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+TOKEN = os.getenv("TOKEN")
+BASE_URL = os.getenv("BASE_URL")
 
-if not BOT_TOKEN:
-    raise RuntimeError("BOT_TOKEN is not set")
+if not TOKEN:
+    raise ValueError("TOKEN not set")
 
-bot = Bot(token=BOT_TOKEN)
+bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
 REDIRECT_TEXT = (
-    "Я переехал 👉 @YTclean_bot\n\n"
+    "Я переехал 👉 @NEW_BOT_USERNAME\n\n"
     "В старом боте работа остановлена."
 )
-
-def run_dummy_server():
-    port = int(os.environ.get("PORT", 10000))
-
-    class Handler(BaseHTTPRequestHandler):
-        def do_GET(self):
-            self.send_response(200)
-            self.end_headers()
-            self.wfile.write(b"OK")
-
-        def log_message(self, format, *args):
-            return
-
-    server = HTTPServer(("0.0.0.0", port), Handler)
-    server.serve_forever()
 
 @dp.message(CommandStart())
 async def start_handler(message: Message):
@@ -46,10 +32,35 @@ async def any_text_handler(message: Message):
 async def any_message_handler(message: Message):
     await message.answer(REDIRECT_TEXT)
 
-async def main():
-    threading.Thread(target=run_dummy_server, daemon=True).start()
-    await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot)
+async def handle_webhook(request):
+    data = await request.json()
+    update = types.Update(**data)
+    await dp.feed_update(bot, update)
+    return web.Response(text="OK")
+
+async def on_startup(app):
+    if WEBHOOK_URL:
+        await bot.set_webhook(WEBHOOK_URL)
+
+async def on_shutdown(app):
+    await bot.delete_webhook()
+    await bot.session.close()
+
+async def health(req):
+    return web.Response(text="OK")
+
+def create_app():
+    app = web.Application()
+    app.router.add_post(WEBHOOK_PATH, handle_webhook)
+    app.router.add_get("/", health)
+    app.router.add_get("/health", health)
+    app.on_startup.append(on_startup)
+    app.on_shutdown.append(on_shutdown)
+    return app
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    web.run_app(create_app(), host="0.0.0.0", port=PORT)
+
+if not BOT_TOKEN:
+    raise RuntimeError("BOT_TOKEN is not set")
+
