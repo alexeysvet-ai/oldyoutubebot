@@ -16,7 +16,7 @@ bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
 REDIRECT_TEXT = (
-    "Я переехал 👉 @NEW_BOT_USERNAME\n\n"
+    "Я переехал 👉 @YTclean_bot\n\n"
     "В старом боте работа остановлена."
 )
 
