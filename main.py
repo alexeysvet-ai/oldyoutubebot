@@ -8,6 +8,7 @@ from aiohttp import web
 
 TOKEN = os.getenv("TOKEN")
 BASE_URL = os.getenv("BASE_URL")
+WEBHOOK_PATH = "/webhook"
 
 if not TOKEN:
     raise ValueError("TOKEN not set")
