@@ -5,6 +5,7 @@ import asyncio
 import os
 import threading
 from aiohttp import web
+from aiogram import Bot, Dispatcher, types, F
 
 TOKEN = os.getenv("TOKEN")
 BASE_URL = os.getenv("BASE_URL")
