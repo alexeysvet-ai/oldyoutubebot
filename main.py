@@ -1,11 +1,7 @@
-from aiogram import Bot, Dispatcher, F
-from aiogram.filters import CommandStart
 from aiogram.types import Message
-import asyncio
 import os
-import threading
 from aiohttp import web
-from aiogram import Bot, Dispatcher, types, F
+from aiogram import Bot, Dispatcher, types
 
 TOKEN = os.getenv("TOKEN")
 BASE_URL = os.getenv("BASE_URL")
@@ -23,14 +19,6 @@ REDIRECT_TEXT = (
     "Я переехал 👉 @NEW_BOT_USERNAME\n\n"
     "В старом боте работа остановлена."
 )
-
-@dp.message(CommandStart())
-async def start_handler(message: Message):
-    await message.answer(REDIRECT_TEXT)
-
-@dp.message(F.text)
-async def any_text_handler(message: Message):
-    await message.answer(REDIRECT_TEXT)
 
 @dp.message()
 async def any_message_handler(message: Message):
@@ -64,7 +52,3 @@ def create_app():
 
 if __name__ == "__main__":
     web.run_app(create_app(), host="0.0.0.0", port=PORT)
-
-if not BOT_TOKEN:
-    raise RuntimeError("BOT_TOKEN is not set")
-
