@@ -7,6 +7,9 @@ import os
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 bot = Bot(token=BOT_TOKEN)
+await bot.delete_webhook(drop_pending_updates=True)
+await dp.start_polling(bot)
+
 dp = Dispatcher()
 
 REDIRECT_TEXT = (
