@@ -4,6 +4,7 @@ from aiogram.types import Message
 import asyncio
 import os
 import threading
+from aiohttp import web
 
 TOKEN = os.getenv("TOKEN")
 BASE_URL = os.getenv("BASE_URL")
