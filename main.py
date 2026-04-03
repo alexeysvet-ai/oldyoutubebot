@@ -7,9 +7,6 @@ import os
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 bot = Bot(token=BOT_TOKEN)
-await bot.delete_webhook(drop_pending_updates=True)
-await dp.start_polling(bot)
-
 dp = Dispatcher()
 
 REDIRECT_TEXT = (
@@ -26,6 +23,10 @@ async def any_text_handler(message: Message):
     await message.answer(REDIRECT_TEXT)
 
 async def main():
+    # 🔑 ключевая строка — снимаем webhook
+    await bot.delete_webhook(drop_pending_updates=True)
+
+    # запускаем polling
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
